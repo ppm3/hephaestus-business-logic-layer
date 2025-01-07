@@ -5,27 +5,19 @@ Parameters:
   ProjectName:
     Type: String
     Description: "Name of the project"
-    Default: atlas
-  ENV:
-    Type: String
-    Description: "Environment (e.g., dev, stage, prod)"
-    Default: "dev"
-    AllowedValues:
-      - dev
-      - stage
-      - production
+    Default: atlas-crafter
 
 Description: >
-  Atlas Dependencies with the core package for Python 3.10 Layer
+  Hephaestus Business Logic Layer
 
 Resources:
-  LambdasDepedenciesLayer:
+  LambdasBusinessLogicLayer:
     Type: AWS::Serverless::LayerVersion
     Metadata:
       BuildMethod: makefile
     Properties:
-      LayerName: !Sub "${ProjectName}-dependencies-${ENV}"
-      Description: "Atlas Dependencies with Python Package Core Layer"
+      LayerName: !Sub "${ProjectName}-business-logic-${ENV}"
+      Description: "Hephaestus Business Logic Layer"
       ContentUri: ./
       CompatibleRuntimes:
         - python3.10
@@ -33,8 +25,8 @@ Resources:
       RetentionPolicy: Delete
 
 Outputs:
-  DependenciesLayer:
-    Description: "Atlas Dependencies with Python Package Core Layer"
-    Value: !Ref LambdasDepedenciesLayer
+  BusinessLogicDependeciesLayer:
+    Description: "Hephaestus Business Logic Layer"
+    Value: !Ref LambdasBusinessLogicLayer
     Export:
       Name: !Sub "${ProjectName}"
