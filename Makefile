@@ -1,8 +1,8 @@
 LAYER_HASH_FILE := $(PROJECT_ROOT)/.layer_hash
 
-.PHONY: build-LambdasDepedenciesLayer build-layer-hash
+.PHONY: build-LambdasBusinessLogicLayer build-layer-hash
 
-build-LambdasDepedenciesLayer: 
+build-LambdasBusinessLogicLayer: 
 	@echo "* Building the layer..."
 	mkdir -p .layer
 	cp -r src/business_logic .layer

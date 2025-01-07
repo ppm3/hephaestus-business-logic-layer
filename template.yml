@@ -5,7 +5,7 @@ Parameters:
   ProjectName:
     Type: String
     Description: "Name of the project"
-    Default: atlas-crafter
+    Default: hephaestus
 
 Description: >
   Hephaestus Business Logic Layer
@@ -16,7 +16,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      LayerName: !Sub "${ProjectName}-business-logic-${ENV}"
+      LayerName: !Sub "${ProjectName}"
       Description: "Hephaestus Business Logic Layer"
       ContentUri: ./
       CompatibleRuntimes:
