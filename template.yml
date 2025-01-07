@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: "Name of the project"
+    Default: atlas
+  ENV:
+    Type: String
+    Description: "Environment (e.g., dev, stage, prod)"
+    Default: "dev"
+    AllowedValues:
+      - dev
+      - stage
+      - production
+
+Description: >
+  Atlas Dependencies with the core package for Python 3.10 Layer
+
+Resources:
+  LambdasDepedenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: !Sub "${ProjectName}-dependencies-${ENV}"
+      Description: "Atlas Dependencies with Python Package Core Layer"
+      ContentUri: ./
+      CompatibleRuntimes:
+        - python3.10
+      LicenseInfo: "MIT"
+      RetentionPolicy: Delete
+
+Outputs:
+  DependenciesLayer:
+    Description: "Atlas Dependencies with Python Package Core Layer"
+    Value: !Ref LambdasDepedenciesLayer
+    Export:
+      Name: !Sub "${ProjectName}"
