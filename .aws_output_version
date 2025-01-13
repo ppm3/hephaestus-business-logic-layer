@@ -1,5 +1,0 @@
-DependenciesLayerV|VERSION|:
-    Description: "Hephaestus Business Logic Layer with version |VERSION|"
-    Value: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:${ProjectName}:|VERSION|"
-    Export:
-        Name: !Sub "${ProjectName}-v|VERSION|"
