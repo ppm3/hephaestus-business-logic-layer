@@ -128,6 +128,81 @@ echo ""
 echo -e "\e[32m[!!] Start proces for: $STACK_NAME stack in region: $AWS_REGION and env: $ENV \e[0m"
 echo ""
 
+# Check if the template.yml file exists
+# Check the version of the outputs for the DependenciesLayer
+# Replace the |VERSION| with the new version
+# finally make the section Outputs with ther version number of the DependenciesLayer
+# the objective is to have a unique version for each deployment of the DependenciesLayer
+TEMPLATE_FILE="template.yml"
+AWS_OUTPUT_VERSION_FILE=".aws_output_version"
+AWS_OUTPUT_VERSION_COPY=".aws_output_version.bak"
+OUTPUTS_COUNT=1
+
+if [ -f "$AWS_OUTPUT_VERSION_COPY" ]; then
+    rm "$AWS_OUTPUT_VERSION_COPY"
+    echo "[!] Removed $AWS_OUTPUT_VERSION_COPY"
+fi
+
+# Get the current version of the DependenciesLayer
+OUTPUTS_COUNT=$(aws lambda list-layer-versions --profile "$AWS_PROFILE" --region "$AWS_REGION" --layer-name "$STACK_NAME" --query 'LayerVersions[0].Version' --output text)
+
+if [ $? -ne 0 ]; then
+    echo "[!] Failed to get the current version of the DependenciesLayer"
+    exit 1
+fi
+
+if [ -z "$OUTPUTS_COUNT" ]; then
+    OUTPUTS_COUNT=1
+else
+    OUTPUTS_COUNT=$((OUTPUTS_COUNT + 1))
+fi
+
+echo "[*] New version for DependenciesLayer: $OUTPUTS_COUNT"
+
+if [ -f "$AWS_OUTPUT_VERSION_FILE" ]; then
+    cp "$AWS_OUTPUT_VERSION_FILE" "$AWS_OUTPUT_VERSION_COPY"
+    echo "[*] Created a backup of $AWS_OUTPUT_VERSION_FILE as $AWS_OUTPUT_VERSION_COPY"
+else
+    echo "[!] $AWS_OUTPUT_VERSION_FILE not found, no backup created"
+fi
+
+if [ -f "$AWS_OUTPUT_VERSION_COPY" ]; then
+    sed -i "s/|VERSION|/$OUTPUTS_COUNT/g" "$AWS_OUTPUT_VERSION_COPY"
+    echo "[*] Replaced |VERSION| with $OUTPUTS_COUNT in $AWS_OUTPUT_VERSION_COPY"
+else
+    echo "[!] $AWS_OUTPUT_VERSION_FILE not found"
+fi
+
+echo "[*] Outputs count: $OUTPUTS_COUNT"
+
+# Check if Outputs section exists in template.yml
+if ! grep -q '^Outputs:' "$TEMPLATE_FILE"; then
+    echo "[!] Outputs section not found in $TEMPLATE_FILE, creating it"
+    echo -e "\nOutputs:\n" >> "$TEMPLATE_FILE"
+else
+    echo "[*] Outputs section found in $TEMPLATE_FILE"
+fi
+
+# Add the version to the Outputs section
+if [ -f "$AWS_OUTPUT_VERSION_COPY" ]; then
+    FILE_CONTENT=$(cat "$AWS_OUTPUT_VERSION_COPY")
+    if ! grep -q "$FILE_CONTENT" "$TEMPLATE_FILE"; then
+        echo -e "  $FILE_CONTENT" >> "$TEMPLATE_FILE"
+        echo "[*] Added FILE_CONTENT to $TEMPLATE_FILE"
+    else
+        echo "[*] FILE_CONTENT already exists in $TEMPLATE_FILE"
+    fi
+
+    rm "$AWS_OUTPUT_VERSION_COPY"
+    echo "[!] Removed $AWS_OUTPUT_VERSION_COPY"
+    echo "[*] Successfully added the version to the Outputs section"
+else
+    echo "[!] $AWS_OUTPUT_VERSION_COPY not found"
+    echo "[!] Impossible to add the version to the Outputs section, stopping script execution"
+    exit 1
+fi
+# end of the versioning process
+
 echo "[*] Running sam validate: $STACK_NAME"
 # Validate the SAM template
 sam validate --lint --region $AWS_REGION

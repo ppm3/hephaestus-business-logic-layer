@@ -1,6 +1,6 @@
 LAYER_HASH_FILE := $(PROJECT_ROOT)/.layer_hash
 
-.PHONY: build-LambdasBusinessLogicLayer build-layer-hash
+.PHONY: build-LambdasBusinessLogicLayer
 
 build-LambdasBusinessLogicLayer: 
 	@echo "* Building the layer..."

@@ -22,11 +22,12 @@ Resources:
       CompatibleRuntimes:
         - python3.10
       LicenseInfo: "MIT"
-      RetentionPolicy: Delete
+      RetentionPolicy: Retain
 
 Outputs:
-  BusinessLogicDependeciesLayer:
-    Description: "Hephaestus Business Logic Layer"
-    Value: !Ref LambdasBusinessLogicLayer
+
+  DependenciesLayerV5:
+    Description: "Hephaestus Business Logic Layer with version 5"
+    Value: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:${ProjectName}:5"
     Export:
-      Name: !Sub "${ProjectName}"
+        Name: !Sub "${ProjectName}-v5"
