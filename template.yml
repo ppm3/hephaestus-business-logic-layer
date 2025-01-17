@@ -31,3 +31,8 @@ Outputs:
     Value: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:${ProjectName}:5"
     Export:
         Name: !Sub "${ProjectName}-v5"
+  DependenciesLayerV6:
+    Description: "Hephaestus Business Logic Layer with version 6"
+    Value: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:${ProjectName}:6"
+    Export:
+      Name: !Sub "${ProjectName}-v6"

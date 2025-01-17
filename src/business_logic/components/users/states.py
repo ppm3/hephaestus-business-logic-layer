@@ -94,11 +94,12 @@ def save_user_state(user_states_table, bot_id, flow_id, message_row, status='raw
             logger.debug("Successfully saved user state for user: %s", user_id)
             return True
     else:
+
         response = user_states_table.update_item(
             Key={'pk': pk, 'sk': sk},
             UpdateExpression="set messages_rows = :messages_rows, updated_at = :updated_at",
             ExpressionAttributeValues={
-                ':messages_rows': item['messages_rows'],
+                ':messages_rows': item['message_rows'] if 'message_rows' in item and item['message_rows'] else [],
                 ':updated_at': item['updated_at']
             }
         )
