@@ -13,19 +13,18 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logLevel)
 
 
-def send_to_fifo(sqs, queue_url, body, channel='whatsapp'):
+def send_to_fifo(sqs, queue_url, body, message_group_id, channel):
     """Send message to SQS FIFO queue"""
     logger.debug("Sending message to SQS: %s", json.dumps(body))
-    unix_epoch_time = int(datetime.datetime.now().timestamp())
-    message_group_id = channel + '_' + str(unix_epoch_time)
 
+    message_group_id += '_' + str(channel)
     message_duplication_id = hashlib.md5(
         json.dumps(body).encode('utf-8')).hexdigest()
 
     response = sqs.send_message(
         QueueUrl=queue_url,
         MessageBody=json.dumps(body),
-        MessageGroupId=str(message_group_id),
+        MessageGroupId=message_group_id,
         MessageDeduplicationId=str(message_duplication_id)
     )
 

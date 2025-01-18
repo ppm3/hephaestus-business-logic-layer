@@ -35,13 +35,14 @@ def update_status_to_processed(user_states_table, user_state_row, status='proces
     return item.get('ResponseMetadata', {}).get('HTTPStatusCode', 0)
 
 
-def insert_next_state(user_states_table, pk, next_node):
+def insert_next_state(user_states_table, user_id: str, pk: str, next_node):
     """Insert the next state into the user_states_table."""
     item = {
         "pk": pk,
         "sk": "state|node|" + next_node['node_ref'],
         "messages_rows": [],
         "message_row_identifier": '',
+        "recipient": user_id,
         "original_message": '',
         "status": "raw",
         'created_at': datetime.datetime.now().isoformat(),
